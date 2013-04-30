@@ -1,7 +1,9 @@
-import java.rmi.registry.Registry;
-import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An object implementing the Remote interface. This allows it to be
@@ -14,7 +16,7 @@ public class Server implements Store {
      */
     public final static int REGISTRY_PORT = 53824;
 
-    private Map<String, int> books = new HashMap<String, int>();
+    private Map<String, Integer> books = new HashMap<String, Integer>();
 
     public int Buy(String bookName, int copies) throws RemoteException {
         if (copies < 0) { throw new RemoteException("Copies must be non-negative."); }
