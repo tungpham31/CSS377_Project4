@@ -14,6 +14,14 @@ public class Server implements Store {
      */
     public final static int REGISTRY_PORT = 53824;
 
+    public int Buy(String bookName, int copies) throws RemoteException {
+        throw new Exception("Not implemented!");
+    }
+
+    public int Sell(String bookName, int copies) throws RemoteException {
+        throw new Exception("Not implemented!");
+    }
+
     public static void main(String args[]) {
 
         try {
