@@ -18,7 +18,20 @@ public class Server implements Store {
 
     public int Buy(String bookName, int copies) throws RemoteException {
         if (copies < 0) { throw new RemoteException("Copies must be non-negative."); }
-        throw new Exception("Not implemented!");
+
+        if (!books.containsKey(bookName)) {
+            books.put(bookName, 0);
+        }
+
+        int available = books.get(bookName);
+        int bought = Math.min(copies, available);
+        books.put(bookName, available - bought);
+
+        if (copies > bought) {
+            // TODO: Wait and buy more.
+        }
+
+        return bought;
     }
 
     public int Sell(String bookName, int copies) throws RemoteException {
