@@ -12,12 +12,8 @@ public class Client {
       Registry registry = LocateRegistry.getRegistry(host, Server.REGISTRY_PORT);
 
       // Get an object by looking up the name it was bound to.
-      Hello stub = (Hello) registry.lookup("Hello");
+      Store stub = (Store) registry.lookup("Store");
 
-      // Now we can make remote method calls on the object.
-      String response = stub.sayHello();
-
-      System.out.println("response: " + response);
     } catch (Exception e) {
       System.err.println("Client exception: " + e.toString());
       e.printStackTrace();

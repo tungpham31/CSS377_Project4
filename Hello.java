@@ -1,12 +1,10 @@
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-/**
- * An example remote interface for RMI. RMI interfaces must extend the base Remote interface.
- */
-public interface Hello extends Remote {
+public interface Store extends Remote {
 
-  String sayHello() throws RemoteException;
+	int Buy(String bookName, int copies) throws RemoteException;
+	int Sell(String bookName, int copies) throws RemoteException;
 
 }
 
