@@ -18,7 +18,7 @@ public class Server implements Store {
 
     private Map<String, Integer> books = new HashMap<String, Integer>();
 
-    public int Buy(String bookName, int copies) throws RemoteException {
+    public synchronized int Buy(String bookName, int copies) throws RemoteException {
         if (copies < 0) { throw new RemoteException("Copies must be non-negative."); }
 
         if (!books.containsKey(bookName)) {
@@ -36,7 +36,7 @@ public class Server implements Store {
         return bought;
     }
 
-    public int Sell(String bookName, int copies) throws RemoteException {
+    public synchronized int Sell(String bookName, int copies) throws RemoteException {
         if (copies < 0) { throw new RemoteException("Copies must be non-negative."); }
 
         if (!books.containsKey(bookName)) {
