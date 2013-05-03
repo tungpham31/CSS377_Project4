@@ -54,6 +54,25 @@ public class Book {
         return waitingRequests.peek().longValue();
     }
     
+    // Remove from the queue the first waiting request of this book
+    public long removeFirstWaitingRequest() throws Exception{
+        if (waitingRequests.size() == 0){
+            throw new Exception("Queue of waiting requests is empty");
+        }
+        
+        Long first = waitingRequests.poll();
+        return first.longValue();
+    }
+    
+    // Remove a specific waiting request with a specific request id
+    public boolean removeWaitingRequest(long requestId) throws Exception{
+        if (waitingRequests.size() == 0){
+            throw new Exception("Queue of waiting requests is empty");
+        }
+        
+        return waitingRequests.remove(Long.valueOf(requestId));
+    }
+    
     // Get method for lock
     public Lock getLock(){
         return lock;

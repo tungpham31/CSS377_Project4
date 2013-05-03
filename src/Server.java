@@ -20,7 +20,7 @@ public class Server implements Store {
      * This port will be assigned to your group for use on EC2. For local testing, you can use any
      * (nonstandard) port you wish.
      */
-    public final static int REGISTRY_PORT = 53824;
+    public final static int REGISTRY_PORT = 27630;
 
     /**
      * The Map mapping from bookName to the according book object
@@ -37,11 +37,18 @@ public class Server implements Store {
      */
     private Lock globalLock = new ReentrantLock();
 
+    /**
+     * A variable to keep track of the execution time in server
+     */
+    private long totalTimeInServer = 0;
+
     public String sayHello() {
         return "Hello";
     }
 
-    public int buy(String bookName, int copies) throws RemoteException {
+    public int buy(String bookName, int copies) throws Exception {
+        long start = System.currentTimeMillis();
+
         if (copies < 0) {
             throw new RemoteException("Copies must be non-negative.");
         }
@@ -114,10 +121,14 @@ public class Server implements Store {
         }
         book.getLock().unlock(); // unlock this book after accessing and modifying its information
 
+        totalTimeInServer += System.currentTimeMillis() - start;
+        System.out.println("Time spent in server so far is: " + totalTimeInServer);
         return bought;
     }
 
     public int sell(String bookName, int copies) throws RemoteException {
+        long start = System.currentTimeMillis();
+
         if (copies < 0) {
             throw new RemoteException("Copies must be non-negative.");
         }
@@ -135,9 +146,13 @@ public class Server implements Store {
         book.getLock().lock(); // lock this book before accessing and modifying its content
         int before = book.getCopies();
         book.setCopies(before + copies); // update number of copies of this book
-        book.getCondVar().signalAll(); // signal all the buyers waiting for this book that there are new copies
-        book.getLock().unlock(); // release the lock after accessing and modifying the book's content
-        
+        book.getCondVar().signalAll(); // signal all the buyers waiting for this book that there are
+                                       // new copies
+        book.getLock().unlock(); // release the lock after accessing and modifying the book's
+                                 // content
+
+        totalTimeInServer += System.currentTimeMillis() - start;
+        System.out.println("Time spent in server so far is: " + totalTimeInServer);
         return before;
     }
 
