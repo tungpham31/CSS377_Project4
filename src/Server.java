@@ -20,7 +20,7 @@ public class Server implements Store {
      * This port will be assigned to your group for use on EC2. For local testing, you can use any
      * (nonstandard) port you wish.
      */
-    public final static int REGISTRY_PORT = 27630;
+    public final static int REGISTRY_PORT = 27631;
 
     /**
      * The Map mapping from bookName to the according book object
@@ -36,9 +36,9 @@ public class Server implements Store {
      * A global lock for global database
      */
     private Lock globalLock = new ReentrantLock();
-
+    
     /**
-     * A variable to keep track of the execution time in server
+     * A variable to keep track of total execution time in server
      */
     private long totalTimeInServer = 0;
 
@@ -121,8 +121,11 @@ public class Server implements Store {
         }
         book.getLock().unlock(); // unlock this book after accessing and modifying its information
 
-        totalTimeInServer += System.currentTimeMillis() - start;
-        System.out.println("Time spent in server so far is: " + totalTimeInServer);
+        long end = System.currentTimeMillis();
+        System.out.println("Time spent in server for this buy request is: "
+                + (end - start));
+        totalTimeInServer += (end - start);
+        System.out.println("Time spent in server so far: " + totalTimeInServer);
         return bought;
     }
 
@@ -151,8 +154,11 @@ public class Server implements Store {
         book.getLock().unlock(); // release the lock after accessing and modifying the book's
                                  // content
 
-        totalTimeInServer += System.currentTimeMillis() - start;
-        System.out.println("Time spent in server so far is: " + totalTimeInServer);
+        long end = System.currentTimeMillis();
+        System.out.println("Time spent in server for this sell request is: "
+                + (end - start));
+        totalTimeInServer += (end - start);
+        System.out.println("Time spent in server so far: " + totalTimeInServer);
         return before;
     }
 

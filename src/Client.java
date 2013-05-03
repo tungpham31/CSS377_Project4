@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class Client {
     private static Store store;
+    private static long totalTime = 0;
 
     public static void main(String[] args) throws Exception {
         String host = (args.length < 1) ? null : args[0];
@@ -22,7 +23,7 @@ public class Client {
             e.printStackTrace();
         }
 
-        TestCase7(); // you can change this to different test case 1, 2, 3, or others
+        TestCase1(); // you can change this to different test case 1, 2, 3, or others
     }
 
     /**
@@ -49,11 +50,11 @@ public class Client {
             System.out.println("book name = " + bookName + " copies = " + copies);
 
             if (command == 'S' || command == 's') {
-                System.out.println(store.sell(bookName, copies));
+                System.out.println("Selling: " + store.sell(bookName, copies));
             }
 
             if (command == 'B' || command == 'b')
-                System.out.println(store.buy(bookName, copies));
+                System.out.println("Buying: " + store.buy(bookName, copies));
         }
     }
 
@@ -240,14 +241,14 @@ public class Client {
      * Run 10 concurrent sell requests Then 10 concurrent buy requests
      */
     private static void TestCase7() {
-        long totalExecutionTime = 0;
-        long startTime = System.currentTimeMillis();
-
         for (int i = 1; i <= 10; i++) {
             new Thread() {
                 public void run() {
                     try {
+                        long startTime = System.currentTimeMillis();
                         store.sell("Home", 1000);
+                        System.out.println("End-to-end latency for sell request is: "
+                                + (System.currentTimeMillis() - startTime));
                     } catch (RemoteException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -263,8 +264,40 @@ public class Client {
             new Thread() {
                 public void run() {
                     try {
+                        long startTime = System.currentTimeMillis();
                         store.buy("Home", 999);
-                        
+                        System.out.println("End-to-end latency for buy request is: "
+                                + (System.currentTimeMillis() - startTime));
+
+                    } catch (RemoteException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+    }
+
+    /**
+     * Run 50 concurrent sell requests Then 50 concurrent buy requests
+     */
+    private static void TestCase8() {
+
+        for (int i = 1; i <= 50; i++) {
+            new Thread() {
+                public void run() {
+                    try {
+                        long startTime = System.currentTimeMillis();
+                        store.sell("Home", 1000);
+                        long endTime = System.currentTimeMillis();
+                        System.out.println("End-to-end latency for sell request is: "
+                                + (endTime - startTime));
+                        totalTime += (endTime - startTime);
+                        System.out.println("Total End-to-end latency so far is: " + totalTime);
+
                     } catch (RemoteException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -276,7 +309,152 @@ public class Client {
             }.start();
         }
 
-        totalExecutionTime += System.currentTimeMillis() - startTime;
-        System.out.println("End-to-end latency is: " + totalExecutionTime);
+        for (int i = 1; i <= 50; i++) {
+            new Thread() {
+                public void run() {
+                    try {
+                        long startTime = System.currentTimeMillis();
+                        store.buy("Home", 999);
+                        long endTime = System.currentTimeMillis();
+                        System.out.println("End-to-end latency for buy request is: "
+                                + (endTime - startTime));
+                        totalTime += endTime - startTime;
+                        System.out.println("Total End-to-end latency so far is: " + totalTime);
+
+                    } catch (RemoteException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+    }
+
+    /**
+     * Run 100 concurrent sell requests Then 100 concurrent buy requests
+     */
+    private static void TestCase9() {
+
+        for (int i = 1; i <= 100; i++) {
+            new Thread() {
+                public void run() {
+                    try {
+                        long startTime = System.currentTimeMillis();
+                        store.sell("Home", 1000);
+                        long endTime = System.currentTimeMillis();
+                        System.out.println("End-to-end latency for sell request is: "
+                                + (endTime - startTime));
+                        totalTime += (endTime - startTime);
+                        System.out.println("Total End-to-end latency so far is: " + totalTime);
+
+                    } catch (RemoteException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+
+        for (int i = 1; i <= 100; i++) {
+            new Thread() {
+                public void run() {
+                    try {
+                        long startTime = System.currentTimeMillis();
+                        store.buy("Home", 999);
+                        long endTime = System.currentTimeMillis();
+                        System.out.println("End-to-end latency for buy request is: "
+                                + (endTime - startTime));
+                        totalTime += endTime - startTime;
+                        System.out.println("Total End-to-end latency so far is: " + totalTime);
+
+                    } catch (RemoteException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+    }
+
+    /**
+     * 10 buy requests for Davinci Code. 10 buy requests for Sherlock Homes. 5 sell requests for
+     * Davinci Code only. 5s later, 10 sell requests for Sherlock Homes.
+     */
+    private static void TestCase10() {
+        for (int i = 1; i <= 10; i++) {
+            new Thread() {
+                public void run() {
+                    try {
+                        System.out.println("Bought Davinci Code = " + store.buy("Davinci Code", 3));
+                    } catch (RemoteException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+
+        for (int i = 1; i <= 10; i++) {
+            new Thread() {
+                public void run() {
+                    try {
+                        System.out.println("Bought Sherlock Homes = "
+                                + store.buy("Sherlock Homes", 2));
+                    } catch (RemoteException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+
+        for (int i = 1; i <= 5; i++) {
+            new Thread() {
+                public void run() {
+                    try {
+                        System.out.println("Sell Davinci Code = " + store.sell("Davinci Code", 2));
+                    } catch (RemoteException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+
+        for (int i = 1; i <= 10; i++) {
+            new Thread() {
+                public void run() {
+                    try {
+                        sleep(5000);
+                        System.out.println("Sell Sherlock Homes = "
+                                + store.sell("Sherlock Homes", 1));
+                    } catch (RemoteException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
     }
 }
